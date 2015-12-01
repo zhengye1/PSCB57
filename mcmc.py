@@ -12,6 +12,10 @@ for line in open("data2.txt"):
 	Dx.append(float(rows[0]))
 	Dy.append(float(rows[1]))
 
+# Normalized vector
+ndx = [1/math.sqrt(sum(p*q for p, q in zip(Dx, Dx))) * v for v in Dx]
+ndy = [1/math.sqrt(sum(p*q for p, q in zip(Dy, Dy))) * v for v in Dy]
+
 # Model
 def y(x, theta):
 	return theta[0] + theta[1] * x
@@ -28,14 +32,17 @@ def P(Dx, Dy, theta):
 	return -chi2(Dx, Dy, theta)
 	
 # Initial guess for model parameters
-theta_current = [-350., 18.]
-P_current = P(Dx, Dy, theta_current)
+#theta_current = [-350., 18.]
+#P_current = P(Dx, Dy, theta_current)
+
+theta_current = [-6, 20]
+P_current = P(ndx, ndy, theta_current)
 
 chain = []
 for i in xrange(20000):
 	theta_proposed = [theta+numpy.random.randn() 
 					for theta in theta_current]	
-	P_proposed = P(Dx, Dy, theta_proposed)
+	P_proposed = P(ndx, ndy, theta_proposed)
 	diff = P_proposed - P_current
 	ratio = math.exp(P_proposed - P_current)
 	r = numpy.random.rand()
