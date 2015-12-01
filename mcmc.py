@@ -16,6 +16,7 @@ for line in open("data2.txt"):
 ndx = [1/math.sqrt(sum(p*q for p, q in zip(Dx, Dx))) * v for v in Dx]
 ndy = [1/math.sqrt(sum(p*q for p, q in zip(Dy, Dy))) * v for v in Dy]
 
+
 # Model
 def y(x, theta):
 	return theta[0] + theta[1] * x
@@ -35,14 +36,18 @@ def P(Dx, Dy, theta):
 #theta_current = [-350., 18.]
 #P_current = P(Dx, Dy, theta_current)
 
-theta_current = [-6, 20]
-P_current = P(ndx, ndy, theta_current)
+# Using the assignment 5 to calculate new least fit, I get
+# Best fit:
+# f(x) = 18.1335147059x x + -3.37098555735
+
+theta_current = [-5., 17.]
+P_current = P(Dx, Dy, theta_current)
 
 chain = []
-for i in xrange(20000):
+for i in xrange(10000):
 	theta_proposed = [theta+numpy.random.randn() 
 					for theta in theta_current]	
-	P_proposed = P(ndx, ndy, theta_proposed)
+	P_proposed = P(Dx, Dy, theta_proposed)
 	diff = P_proposed - P_current
 	ratio = math.exp(P_proposed - P_current)
 	r = numpy.random.rand()
@@ -50,31 +55,11 @@ for i in xrange(20000):
 	if ratio > r:
 		theta_current = theta_proposed
 		P_current = P_proposed
-	#if i >= 5000: # save chain only after burn-in	
 	chain.append(theta_current)
 
 theta0 = [c[0] for c in chain]
 theta1 = [c[1] for c in chain]
 
-##Calculate average:
-#theta_avg = [0., 0.]
-#for theta in chain:
-	#for i in xrange(2):
-		#theta_avg[i] += theta[i]
-#for i in xrange(2):
-	#theta_avg[i] /= len(chain)
-	
-## Calculate model y
-#My = []
-#for x in Dx:
-	#My.append(y(x, theta_avg))
-
-#plt.plot(Dx, Dy, "ro")
-#plt.plot(Dx, My, ".")
-#print "theta average: ", theta_avg
-#print "Dx: ", Dx
-#print "Dy: ", Dy
-#print "My: ", My
 
 ax1 = plt.subplot(211)
 plt.plot(theta0, '-b', label='Theta[0] vs generations')
